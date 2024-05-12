@@ -15,13 +15,22 @@ export class UsuarioRepository {
         const possivelUsuario = this.usuarios.find(item => item.email === email)
         return possivelUsuario != undefined
     }
-    async atualiza(id:string,dadosDeAtualizacao:Partial<UsuarioEntity>){
+    private buscaPorId = (id:string) =>{
         const possivelUsuario = this.usuarios.find(item => item.id === id) 
         if(!possivelUsuario) {throw new Error('User does not exist!')}
+        return possivelUsuario
+    }
+    async atualiza(id:string,dadosDeAtualizacao:Partial<UsuarioEntity>){
+        const usuario = this.buscaPorId(id)
             Object.entries(dadosDeAtualizacao).forEach(([chave,valor])=>{
                 if(chave === id) return
-                possivelUsuario[chave] = valor
+                usuario[chave] = valor
             })
-            return possivelUsuario
+            return usuario
+    }
+    async remove(id:string){
+        const usuario = this.buscaPorId(id)
+        this.usuarios = this.usuarios.filter(item=>item.id!==id)
+         return usuario
     }
 }
