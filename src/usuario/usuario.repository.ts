@@ -15,4 +15,13 @@ export class UsuarioRepository {
         const possivelUsuario = this.usuarios.find(item => item.email === email)
         return possivelUsuario != undefined
     }
+    async atualiza(id:string,dadosDeAtualizacao:Partial<UsuarioEntity>){
+        const possivelUsuario = this.usuarios.find(item => item.id === id) 
+        if(!possivelUsuario) {throw new Error('User does not exist!')}
+            Object.entries(dadosDeAtualizacao).forEach(([chave,valor])=>{
+                if(chave === id) return
+                possivelUsuario[chave] = valor
+            })
+            return possivelUsuario
+    }
 }

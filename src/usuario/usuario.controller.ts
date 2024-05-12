@@ -1,9 +1,10 @@
-import { Body, Controller, Get, Post } from "@nestjs/common";
+import { Body, Controller, Get, Post,Put,Param } from "@nestjs/common";
 import { UsuarioRepository } from "./usuario.repository";
 import { CriaUsuarioDTO } from "./dto/criausuario.dto";
 import { UsuarioEntity } from "./usuario.entity";
 import { v4 as uuid } from 'uuid'
 import { LitaUsuarioDTO } from "./dto/ListaUsuario.DTO";
+import { AtualizaUsuarioDTO } from "./dto/AtualizaUsuario.dto";
 
 @Controller('/usuarios')
 export class UsuarioController{
@@ -17,7 +18,7 @@ export class UsuarioController{
         usuarioEntity.senha =  dadosDoUsuario.senha
         usuarioEntity.id =  uuid()
          this.usuarioRepository.salvar(usuarioEntity)
-         return {message:'User created succesfully!', usuario: new LitaUsuarioDTO(
+         return {message:'User created succesfully!', user: new LitaUsuarioDTO(
             usuarioEntity.nome,
             usuarioEntity.id
          )}
@@ -31,5 +32,16 @@ export class UsuarioController{
             user.id
         ))
         return usuariosLista
+    }
+    @Put('/:id')
+    async atualizaUsuario(@Param('id') id:string,@Body() novosDados:AtualizaUsuarioDTO){
+        const usuarioAtualizado = await this.usuarioRepository.atualiza(id,novosDados)
+        return {
+            user: new LitaUsuarioDTO(
+                usuarioAtualizado.nome,
+                usuarioAtualizado.id
+             ),
+            message: 'User updated succesfully!'
+        }
     }
 }
